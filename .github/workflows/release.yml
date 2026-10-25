@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+# packages builds every target (scripts/package.mjs "all"): one VSIX per
+# darwin/linux/win32 x arm64/x64 in dist/. The Claude Code binary and the
+# optional SDK dependency are per-target. Built on macOS because the dictation
+# helper (native/dictation) only compiles there and ships in the darwin VSIXs.
+jobs:
+  packages:
+    name: Build VSIX
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run package:all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: |
+            dist/*.vsix
+            dist/install.sh
+            dist/install.ps1
+            dist/Install Dual Agent.command
+            dist/INSTALL.md
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: vsix
+          path: dist
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Publish to VS Code Marketplace
+        if: env.VSCE_PAT != ''
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          for f in dist/*.vsix; do
+            npx @vscode/vsce publish --packagePath "$f"
+          done
+      - name: Publish to Open VSX
+        if: env.OVSX_PAT != ''
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          for f in dist/*.vsix; do
+            npx ovsx publish "$f" -p "$OVSX_PAT"
+          done
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=(dist/*.vsix dist/install.sh dist/install.ps1 "dist/Install Dual Agent.command" dist/INSTALL.md)
+          present=()
+          for f in "${files[@]}"; do [ -f "$f" ] && present+=("$f"); done
+          gh release create "$GITHUB_REF_NAME" "${present[@]}" --title "$GITHUB_REF_NAME" --generate-notes

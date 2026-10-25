@@ -1,0 +1,48 @@
+# Secrets: the DeepSeek key and optional search API keys. Never commit these.
+credentials/
+*.env
+.env.*
+!.env.example
+
+# Dependencies and build output (rebuilt by `make deps` / `make package`)
+node_modules
+out/
+# The dictation helper app (scripts/build-dictation.mjs)
+bin/
+
+# Per-project agent memory and logs
+.dual-agent/
+
+# Packaged extensions: ~110 MB each, over GitHub's file size limit.
+# `make install` builds the one for the machine it runs on.
+*.vsix
+dist/
+
+# Test runs (benchmark summaries worth keeping get copied into reports/)
+test-output/
+bench-results/
+eval-results/
+.vscode-test/
+coverage/
+
+# Logs and caches
+*.log
+npm-debug.log*
+.npm/
+*.tsbuildinfo
+
+# Editors and OS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+*~
+.vscode/*
+!.vscode/launch.json
+
+# Working notes behind research reports (the reports themselves live in reports/)
+research_notes/

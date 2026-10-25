@@ -1,0 +1,564 @@
+/* ---------- Welcome ---------- */
+
+.welcome {
+  margin: auto 0;
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.welcome .hero-mark {
+  width: 46px;
+  height: 46px;
+  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--accent-2) 35%, transparent));
+}
+
+.welcome h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--text) 0%, color-mix(in srgb, var(--accent-2) 45%, white) 55%, color-mix(in srgb, var(--accent) 55%, white) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.welcome .sub {
+  margin: -6px 0 0;
+  color: var(--muted);
+}
+
+.providers {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.provider-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.provider-card .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.provider-card .name {
+  font-weight: 600;
+}
+
+.provider-card .detail {
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.ok {
+  color: var(--green);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.badge.ok::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: 380px;
+}
+
+.suggestion {
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.suggestion:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent-2) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-2) 8%, transparent);
+}
+
+/* ---------- Composer ---------- */
+
+footer {
+  flex: none;
+  padding: 6px 10px 10px;
+  container-type: inline-size;
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 8px 6px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.composer:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.chips:empty {
+  display: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  height: 24px;
+  padding: 0 4px 0 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--text);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+}
+
+.chip .icon {
+  width: 12px;
+  height: 12px;
+  color: var(--accent-2);
+}
+
+.chip .label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip .remove {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.chip .remove:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.chip.editor {
+  padding-right: 8px;
+  cursor: pointer;
+}
+
+.chip.editor.off {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.chip.static {
+  padding-right: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-color: transparent;
+}
+
+textarea {
+  width: 100%;
+  min-height: 22px;
+  max-height: 40vh;
+  padding: 4px 6px;
+  resize: none;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+textarea::placeholder {
+  color: var(--faint);
+}
+
+.composer-bar {
+  /* Attach, Agents, Permissions and tokens together on the left; Send on the right. */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.composer-bar .send {
+  margin-left: auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 550;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* display above would override the hidden attribute */
+.pill[hidden] {
+  display: none;
+}
+
+button.pill:hover,
+button.pill[aria-expanded='true'] {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-strong);
+}
+
+.pill .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.pill .chevron {
+  width: 11px;
+  height: 11px;
+  opacity: 0.6;
+  margin-left: -1px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--faint);
+}
+
+.dot.claude {
+  background: var(--claude);
+}
+
+.dot.deepseek {
+  background: var(--deepseek);
+}
+
+.dot.auto {
+  background: var(--grad-brand);
+}
+
+.dot.off {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--amber);
+}
+
+#permPill.acceptEdits {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+#permPill.bypassPermissions {
+  color: #fecaca;
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+#permPill.plan {
+  color: color-mix(in srgb, var(--accent) 45%, white);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* The mic, next to Send: red while recording, with a halo that follows your voice (--level, 0-1). */
+.mic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  border-radius: 50%;
+  color: var(--muted);
+  transition: color 0.15s, background 0.15s;
+}
+
+/* Off the bar until the extension says this machine can dictate (macOS). */
+.mic[hidden] {
+  display: none;
+}
+
+.composer-bar .mic:not([hidden]) ~ .send {
+  margin-left: 0;
+}
+
+.mic:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mic .icon {
+  position: relative;
+  width: 15px;
+  height: 15px;
+}
+
+.mic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--red) 28%, transparent);
+  opacity: 0;
+  transform: scale(calc(1 + 0.35 * var(--level, 0)));
+  transition: transform 0.12s ease-out, opacity 0.15s;
+}
+
+.mic[data-state='starting'] {
+  color: var(--red);
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+.mic[data-state='listening'] {
+  color: #fff;
+  background: var(--red);
+}
+
+.mic[data-state='listening']::before {
+  opacity: 1;
+}
+
+/* The tune menu's button: a dot while Remote Control is on (::before, so reduced motion stills it). */
+.tune {
+  position: relative;
+}
+
+.tune[data-remote='starting']::before,
+.tune[data-remote='connected']::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.tune[data-remote='starting']::before,
+.dot.remote-starting {
+  background: var(--muted);
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+.dot.remote-connected {
+  background: var(--green);
+}
+
+/* Min width so the bar rarely shifts; grows when the text needs more room. */
+.pill.usage {
+  min-width: 74px;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pill.usage.high {
+  color: var(--amber);
+}
+
+.send {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--on-accent);
+  background: var(--grad-brand);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-2) 40%, transparent);
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.send.empty:not(.busy) {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.send .stop-icon {
+  display: none;
+}
+
+/* Its own stacking context, so the face and the ring sit behind the icon but above the composer. */
+.send.busy {
+  position: relative;
+  z-index: 0;
+  background: none;
+  color: var(--text);
+  box-shadow: none;
+}
+
+/* A ring that grows and fades behind the face; only transform and opacity animate, so nothing repaints. */
+.send.busy::before,
+.send.busy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.send.busy::before {
+  z-index: -2;
+  background: var(--accent);
+  opacity: 0;
+  animation: ring 1.6s ease-out infinite;
+}
+
+.send.busy::after {
+  z-index: -1;
+  background: var(--surface-3);
+}
+
+.send.busy .send-icon {
+  display: none;
+}
+
+.send.busy .stop-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+/* Narrow sidebars: keep one evenly spaced row by shedding chevrons, then labels (the tooltips keep the detail). */
+@container (max-width: 400px) {
+  .composer-bar .pill .chevron {
+    display: none;
+  }
+  .pill {
+    padding: 0 8px;
+  }
+  .pill.usage {
+    min-width: 64px;
+  }
+}
+
+@container (max-width: 330px) {
+  #permPill span {
+    display: none;
+  }
+  #permPill {
+    width: 26px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* ---------- Model pill (top bar) ---------- */
+
+.model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  height: 20px;
+  padding: 0 7px 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.model-pill:hover,
+.model-pill[aria-expanded='true'] {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-strong);
+}
+
+#modelLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-pill .chevron {
+  width: 10px;
+  height: 10px;
+  opacity: 0.6;
+  flex: none;
+}
+
+@media (max-width: 300px) {
+  .auto-prefix {
+    display: none;
+  }
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 5px 6px;
+  background: var(--border-strong);
+}

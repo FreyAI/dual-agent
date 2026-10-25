@@ -1,0 +1,272 @@
+/* ---------- Menu ---------- */
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  min-width: 220px;
+  max-width: calc(100vw - 20px);
+  padding: 5px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  animation: pop 0.16s var(--ease) both;
+}
+
+.menu[hidden] {
+  display: none;
+}
+
+.menu-title {
+  padding: 6px 10px 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.menu-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: rgba(255, 255, 255, 0.06);
+  outline: none;
+}
+
+.menu-item .dot {
+  margin-top: 5px;
+}
+
+.menu-item .text {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-item .label {
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.menu-item .desc {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.menu-item .check {
+  color: var(--accent);
+  font-size: 13px;
+  visibility: hidden;
+}
+
+.menu-item.selected .check {
+  visibility: visible;
+}
+
+.menu-item.danger .label {
+  color: #fca5a5;
+}
+
+/* ---------- File context chip ---------- */
+
+.chip.editor {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface-3));
+}
+
+.chip.editor .icon {
+  color: var(--accent);
+}
+
+.chip .chip-sel {
+  height: 16px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 16px;
+  color: var(--bg);
+  background: var(--grad-brand);
+  white-space: nowrap;
+}
+
+.chip.static .chip-sel {
+  color: var(--user-3);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.chip.editor.off .chip-sel {
+  background: var(--faint);
+}
+
+/* ---------- Theme picker ---------- */
+
+.menu.theme-menu {
+  min-width: 200px;
+}
+
+.menu-item .swatch {
+  width: 30px;
+  height: 16px;
+  margin-top: 2px;
+  flex: none;
+  border-radius: 999px;
+  border: 3px solid transparent;
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
+.swatch.t-midnight {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  border-color: #0e1016;
+}
+
+.swatch.t-oled {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  border-color: #000000;
+}
+
+.swatch.t-graphite {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  border-color: #111213;
+}
+
+.swatch.t-nord {
+  background: linear-gradient(135deg, #88c0d0 0%, #81a1c1 100%);
+  border-color: #242933;
+}
+
+.swatch.t-ocean {
+  background: linear-gradient(135deg, #22d3ee 0%, #2dd4bf 100%);
+  border-color: #08141a;
+}
+
+.swatch.t-forest {
+  background: linear-gradient(135deg, #4ade80 0%, #2dd4bf 100%);
+  border-color: #0b120d;
+}
+
+.swatch.t-aurora {
+  background: linear-gradient(135deg, #f472b6 0%, #a78bfa 100%);
+  border-color: #110d17;
+}
+
+.swatch.t-ember {
+  background: linear-gradient(135deg, #fb923c 0%, #f43f5e 100%);
+  border-color: #130e0c;
+}
+
+/* ---------- History ---------- */
+
+.restoring .enter {
+  animation: none;
+}
+
+.menu.history-menu {
+  width: min(320px, calc(100vw - 20px));
+  max-height: min(420px, 70vh);
+  overflow-y: auto;
+}
+
+.history-menu .menu-item .label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Grows 9px past a 32px button while fading out. */
+@keyframes ring {
+  0% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5625);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Efficiency section of the usage panel */
+.eff-head {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.tool-stats {
+  margin: 8px 0 4px;
+  font-size: 11px;
+}
+.tool-stat {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) 0.5fr 0.8fr 1fr 0.6fr 1.2fr;
+  gap: 6px;
+  padding: 3px 0;
+  color: var(--muted);
+}
+.tool-stat.faint {
+  color: var(--faint);
+}
+.tool-stat .ts-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+.tool-stat .ts-err {
+  color: var(--amber);
+}

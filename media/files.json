@@ -1,0 +1,4 @@
+{
+  "css": ["styles/base.css", "styles/conversation.css", "styles/usage.css", "styles/cards.css", "styles/composer.css", "styles/agents.css", "styles/menus.css"],
+  "js": ["chat/core.js", "chat/markdown.js", "chat/conversation.js", "chat/composer.js", "chat/menus.js", "chat/agents.js", "chat/cards.js", "chat/usage.js", "chat/main.js"]
+}

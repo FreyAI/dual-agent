@@ -1,0 +1,35 @@
+src/**
+out/**/*.map
+tsconfig.json
+.vscode/**
+*.vsix
+dist/**
+scripts/**
+install/**
+out/test/**
+test-output/**
+.vscode-test/**
+Makefile
+credentials/**
+.gitignore
+media/**/jsconfig.json
+# Joined into media/chat.js and chat.css (scripts/bundle.mjs).
+media/chat/**
+media/styles/**
+media/files.json
+# README images, served from GitHub.
+media/assets/**
+# Everything else is bundled into out/extension.js (scripts/bundle.mjs); the SDK finds its binary by package name.
+node_modules/**
+!node_modules/@anthropic-ai/claude-agent-sdk/**
+!node_modules/@anthropic-ai/claude-agent-sdk-*/**
+# Repo-only files: docs, community health files and CI.
+docs/**
+.github/**
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+reports/**
+eval-results/**
+bench-results/**
+.dual-agent/**

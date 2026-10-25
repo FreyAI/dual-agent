@@ -1,0 +1,675 @@
+/* ---------- Agents pill ---------- */
+
+#agentsPill {
+  position: relative;
+  min-width: 0;
+}
+
+#agentsPill.running {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* Something works: a spinning wheel on the right; a still dot when it waits on you. */
+#agentsPill.running::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+#agentsPill[data-alert='warning'] {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--amber) 55%, transparent);
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+}
+
+#agentsPill[data-alert='blocked'],
+#agentsPill[data-alert='failed'] {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--red) 55%, transparent);
+  background: color-mix(in srgb, var(--red) 14%, transparent);
+}
+
+#agentsPill[data-alert='warning']::after {
+  border-color: color-mix(in srgb, var(--amber) 25%, transparent);
+  border-top-color: var(--amber);
+}
+
+#agentsPill[data-alert='blocked']::after {
+  width: 7px;
+  height: 7px;
+  border: none;
+  background: var(--red);
+  animation: none;
+}
+
+#agentsLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#agentsPill .warn-badge {
+  flex-shrink: 0;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+
+#agentsPill[aria-expanded='true'] {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Agents panel ---------- */
+
+.agents-panel {
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  margin-bottom: 8px;
+  padding: 10px 10px 8px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  animation: pop 0.16s var(--ease) both;
+  scrollbar-width: thin;
+}
+
+.agents-panel[hidden] {
+  display: none;
+}
+
+.ap-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ap-title {
+  font-weight: 650;
+}
+
+.ap-meta {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ap-tokens {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 8px;
+  border-radius: 999px;
+  color: var(--text);
+  background: var(--surface-3);
+  white-space: nowrap;
+}
+
+.ap-head .icon-btn {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ap-section {
+  margin-top: 8px;
+}
+
+.ap-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.ap-progress {
+  height: 4px;
+  margin-bottom: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.ap-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--grad-brand);
+  transition: width 0.3s;
+}
+
+.plan {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 12px;
+}
+
+.pi-mark {
+  width: 12px;
+  height: 12px;
+  margin-top: 2px;
+  flex: none;
+  border-radius: 50%;
+  border: 1.5px solid var(--faint);
+}
+
+.plan-item.in_progress .pi-mark {
+  border-color: var(--accent);
+  border-right-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+.plan-item.in_progress .pi-text {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.plan-item.completed .pi-mark {
+  border: none;
+  background: var(--green);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--green) 60%, var(--bg));
+}
+
+.plan-item.completed .pi-text,
+.plan-item.pending .pi-text {
+  color: var(--muted);
+}
+
+.plan-item.completed .pi-text {
+  text-decoration: line-through;
+}
+
+.ap-empty {
+  padding: 6px 2px 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ap-warnings {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 6px;
+  font-size: 12px;
+}
+
+.ap-warnings summary {
+  cursor: pointer;
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.ap-warnings summary span {
+  margin-left: 4px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.ap-warnings ul {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.ap-warnings li {
+  display: flex;
+  gap: 8px;
+  padding: 3px 0;
+  color: var(--muted);
+}
+
+.aw-time,
+.aw-count {
+  flex-shrink: 0;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.aw-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-card {
+  margin-bottom: 6px;
+  padding: 7px 9px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.agent-card.running {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.agent-card.warning {
+  border-color: color-mix(in srgb, var(--amber) 45%, transparent);
+}
+
+.agent-card.blocked {
+  border-color: color-mix(in srgb, var(--red) 50%, transparent);
+}
+
+.agent-card.nested {
+  margin-left: 14px;
+}
+
+.ac-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 7px;
+  width: 100%;
+  text-align: left;
+}
+
+.ac-stop {
+  margin: 4px 0 0 22px;
+  padding: 1px 8px;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.ac-stop:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.status-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  flex: none;
+  border-radius: 50%;
+  color: var(--muted);
+}
+
+.status-icon .icon {
+  width: 9px;
+  height: 9px;
+  stroke-width: 3.2;
+}
+
+/* Still working but flagged: the wheel keeps spinning, in amber, beside the warning. */
+.status-icon.warning::before {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--amber);
+  animation: spin 0.8s linear infinite;
+}
+
+.status-icon.warning {
+  position: relative;
+}
+
+/* Running: a small spinning wheel (static ring when motion is reduced). */
+.status-icon.running::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+
+.status-icon.idle::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+.status-icon.done {
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 16%, transparent);
+}
+
+.status-icon.failed {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+}
+
+.status-icon.blocked {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 16%, transparent);
+}
+
+.status-icon.blocked .icon {
+  width: 11px;
+  height: 11px;
+  stroke-width: 2.4;
+}
+
+.status-icon.warning {
+  color: var(--amber);
+}
+
+.status-icon.warning .icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+.status-icon.stopped {
+  background: var(--surface-3);
+}
+
+.status-icon.stopped .icon {
+  width: 7px;
+  height: 7px;
+  fill: currentColor;
+}
+
+.agent-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 4px;
+}
+
+.agent-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 3px 4px 3px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.agent-pill:hover {
+  border-color: var(--border-strong);
+}
+
+.agent-pill.warning {
+  border-color: color-mix(in srgb, var(--amber) 45%, transparent);
+}
+
+.agent-pill.blocked,
+.agent-pill.failed {
+  border-color: color-mix(in srgb, var(--red) 45%, transparent);
+}
+
+.agent-pill[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+
+.apl-name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.apl-count {
+  padding: 0 5px;
+  font-size: 10.5px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface-3);
+}
+
+.apl-note {
+  font-size: 11px;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+.apl-task {
+  min-width: 0;
+  max-width: 200px;
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ac-note {
+  margin-top: 3px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.ac-note.blocked {
+  color: var(--red);
+}
+
+.ac-note.warning {
+  color: var(--amber);
+}
+
+.ac-name {
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.ac-model {
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  color: var(--muted);
+  background: var(--surface-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ac-model.deepseek {
+  color: var(--deepseek);
+  background: color-mix(in srgb, var(--deepseek) 14%, transparent);
+}
+
+.ac-model.claude {
+  color: var(--claude);
+  background: color-mix(in srgb, var(--claude) 14%, transparent);
+}
+
+.ac-stats {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ac-desc {
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.ac-summary {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* Markdown inside agent descriptions and summaries (same tokens as .msg). */
+.ac-desc,
+.ac-summary {
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.ac-desc > :first-child,
+.ac-summary > :first-child {
+  margin-top: 0;
+}
+
+.ac-desc > :last-child,
+.ac-summary > :last-child {
+  margin-bottom: 0;
+}
+
+.ac-desc p,
+.ac-summary p {
+  margin: 0.4em 0;
+}
+
+.ac-desc h3,
+.ac-desc h4,
+.ac-desc h5,
+.ac-desc h6,
+.ac-summary h3,
+.ac-summary h4,
+.ac-summary h5,
+.ac-summary h6 {
+  margin: 0.8em 0 0.3em;
+  font-size: 1.02em;
+  font-weight: 650;
+}
+
+.ac-desc ul,
+.ac-desc ol,
+.ac-summary ul,
+.ac-summary ol {
+  margin: 0.4em 0;
+  padding-left: 1.3em;
+}
+
+.ac-desc a,
+.ac-summary a {
+  color: var(--accent);
+}
+
+.ac-desc a[data-open],
+.ac-summary a[data-open] {
+  cursor: pointer;
+}
+
+.ac-desc blockquote,
+.ac-summary blockquote {
+  margin: 0.4em 0;
+  padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--border-strong);
+  color: var(--muted);
+}
+
+.ac-desc hr,
+.ac-summary hr {
+  margin: 0.8em 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.ac-desc .table-wrap,
+.ac-summary .table-wrap {
+  margin: 0.5em 0;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.ac-desc table,
+.ac-summary table {
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.ac-desc th,
+.ac-desc td,
+.ac-summary th,
+.ac-summary td {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ac-desc th,
+.ac-summary th {
+  background: var(--surface);
+  font-weight: 650;
+}
+
+.ac-desc pre,
+.ac-summary pre {
+  max-width: 100%;
+}
+
+.ac-steps {
+  margin: 5px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ac-steps li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0;
+  font-size: 11.5px;
+  color: var(--muted);
+  min-width: 0;
+}
+
+.ac-steps .icon {
+  width: 12px;
+  height: 12px;
+  color: var(--accent-2);
+}
+
+.st-tool {
+  color: var(--text);
+  font-weight: 600;
+  flex: none;
+}
+
+.st-detail {
+  font-family: var(--mono);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ac-more {
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.ac-more:hover {
+  text-decoration: underline;
+}

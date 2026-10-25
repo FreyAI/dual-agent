@@ -1,0 +1,4 @@
+{
+  "compilerOptions": { "checkJs": true, "strict": false, "target": "ES2022", "lib": ["ES2022", "DOM"], "noEmit": true },
+  "include": ["*.js"]
+}

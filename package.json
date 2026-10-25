@@ -1,0 +1,584 @@
+{
+  "name": "dual-agent",
+  "displayName": "Dual Agent (Claude + DeepSeek)",
+  "description": "A coding agent for VS Code that runs on Claude and DeepSeek and routes each task to the cheaper model that can do it, with cost limits and automatic fallback.",
+  "version": "0.9.0",
+  "publisher": "local",
+  "private": true,
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1E1E1E",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreyAI/dual-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FreyAI/dual-agent/issues"
+  },
+  "homepage": "https://github.com/FreyAI/dual-agent#readme",
+  "keywords": [
+    "claude",
+    "deepseek",
+    "ai",
+    "agent",
+    "coding agent",
+    "llm",
+    "chat",
+    "cost",
+    "token budget",
+    "anthropic"
+  ],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "AI",
+    "Chat",
+    "Programming Languages",
+    "Machine Learning"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dualAgent",
+          "title": "Dual Agent",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "dualAgent": [
+        {
+          "type": "webview",
+          "id": "dualAgent.chat",
+          "name": "Chat"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "dualAgent.openInEditor",
+        "title": "Open in New Tab",
+        "category": "Dual Agent",
+        "icon": {
+          "light": "media/logo.svg",
+          "dark": "media/logo.svg"
+        }
+      },
+      {
+        "command": "dualAgent.switchProvider",
+        "title": "Switch Provider (Auto / Claude / DeepSeek)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.newChat",
+        "title": "New Chat",
+        "category": "Dual Agent",
+        "icon": "$(add)"
+      },
+      {
+        "command": "dualAgent.signInClaude",
+        "title": "Sign In to Claude",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.setDeepSeekKey",
+        "title": "Set DeepSeek API Key",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.setAnthropicKey",
+        "title": "Set Anthropic API Key (optional, instead of sign-in)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.clearKeys",
+        "title": "Clear Stored API Keys",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.openSettings",
+        "title": "Open Settings",
+        "category": "Dual Agent",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "dualAgent.clearHistory",
+        "title": "Clear Chat History (this repo)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.setReplyStyle",
+        "title": "Set Reply Style (Off / Lite / Full / Ultra)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.compressMemory",
+        "title": "Compress Memory File (CLAUDE.md, rules…)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.exportMetrics",
+        "title": "Export Metrics (CSV)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.setBuildMode",
+        "title": "Set Build Mode (Hybrid / Reuse / Craft)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.splitClaudeMd",
+        "title": "Split CLAUDE.md into Path-Scoped Rules",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.showFailures",
+        "title": "Show Failures",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.diagnoseBurn",
+        "title": "Diagnose Token Burn",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.startRemoteControl",
+        "title": "Start Remote Control (Claude App, with DeepSeek)",
+        "category": "Dual Agent"
+      },
+      {
+        "command": "dualAgent.resetCostLimits",
+        "title": "Reset Cost Limits",
+        "category": "Dual Agent"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "dualAgent.openInEditor",
+          "when": "view == dualAgent.chat",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "dualAgent.openInEditor",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "dualAgent.compressMemory",
+          "when": "resourceExtname =~ /^\\.(md|mdc|txt)$/",
+          "group": "7_modification"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Dual Agent",
+      "properties": {
+        "dualAgent.mode": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "claude",
+            "deepseek"
+          ],
+          "enumDescriptions": [
+            "Use the primary provider; switch to the other one automatically when it fails (signed out, usage limit, out of credit, outage).",
+            "Always use Claude.",
+            "Always use DeepSeek."
+          ],
+          "default": "auto",
+          "description": "Which backend the agent runs on."
+        },
+        "dualAgent.effort": {
+          "type": "string",
+          "enum": [
+            "flash",
+            "thinking"
+          ],
+          "enumDescriptions": [
+            "Fast answers without extended thinking. DeepSeek uses its Flash model; Claude runs at low effort.",
+            "Think before answering. DeepSeek uses V4 Pro with thinking on; Claude runs at high effort."
+          ],
+          "default": "thinking",
+          "description": "How hard Claude thinks (DeepSeek has its own dualAgent.deepseek.effort). Changing it applies from the next message; the conversation continues."
+        },
+        "dualAgent.deepseek.effort": {
+          "type": "string",
+          "enum": [
+            "flash",
+            "thinking"
+          ],
+          "enumDescriptions": [
+            "DeepSeek Flash: fast and very cheap; good for reading, searching and delegated steps.",
+            "DeepSeek V4 Pro with thinking: plans and supervises; auto mode still sends mechanical work to Flash (default)."
+          ],
+          "default": "thinking",
+          "description": "Which DeepSeek model leads by default. The Effort menu in the chat changes it whenever DeepSeek answers next."
+        },
+        "dualAgent.helperAgents": {
+          "type": "boolean",
+          "default": true,
+          "description": "Let the agent hand jobs to helper agents on their own models: a quick helper on the fast model (DeepSeek Flash / Claude Haiku) for searches, reading and small edits, and a deep thinker on the strong model (DeepSeek V4 Pro / Claude Sonnet) for hard problems. The main agent picks per job. Each helper stops after 30 steps."
+        },
+        "dualAgent.deepseekHelpers": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When Claude leads, its delegated work (quick jobs, searches, general tasks) runs on DeepSeek Flash as long as DeepSeek is below its share of `#dualAgent.tokenSplit#` (always, with no split); once DeepSeek is ahead, it runs on Claude's smaller models. Planning (Plan, deep thinker) follows the same provider on its strongest model — DeepSeek V4 Pro below its share, Claude's planner model once ahead. Needs a DeepSeek key; the claude.ai sign-in is never sent to DeepSeek."
+        },
+        "dualAgent.claudeHelpers": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When DeepSeek leads, planning (Plan, deep thinker) runs on DeepSeek's strongest model while it is below its share of `#dualAgent.tokenSplit#`, and moves to Claude (`#dualAgent.claude.plannerModel#`) — along with the delegated work on Claude's smaller models — once DeepSeek is ahead of its share. The session then runs with your Claude sign-in behind the local proxy, which strips it from every DeepSeek request. Off: DeepSeek chats use DeepSeek only."
+        },
+        "dualAgent.autoApproveReadOnly": {
+          "type": "boolean",
+          "default": true,
+          "description": "With permissions set to Ask, run shell commands that only read (git status/diff/log, ls, rg, grep, find without -exec, wc…) without asking. Anything that writes or runs other programs still asks."
+        },
+        "dualAgent.maxParallelHelpers": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 20,
+          "description": "How many helper agents may run at once. Each new helper re-reads its brief and files at full price, so more at once costs more for most coding work. Claude Code's own default is 20."
+        },
+        "dualAgent.clearOldToolResults": {
+          "type": "boolean",
+          "default": true,
+          "description": "On DeepSeek, mask old tool output in long conversations, in fixed batches through a local proxy so the prompt cache stays intact. Cuts the tokens every later call re-sends. Takes effect for new agent sessions."
+        },
+        "dualAgent.claude.clearOldToolResults": {
+          "type": "boolean",
+          "default": false,
+          "description": "On Claude, turn on Anthropic's server-side clearing of old tool output once the context passes 100k tokens. Each clear rewrites the whole cached conversation (on Opus a cache write costs 40 reads), so it rarely pays back before compaction. Takes effect for new agent sessions."
+        },
+        "dualAgent.projectMemory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Give agents the project memory in .dual-agent/memory: the notes index at the start of a chat, a brief of checked commands and gotchas to every helper, and the notes about a large file when it is read. Turn off to compare cost and results without it; notes are still kept. Takes effect for new agent sessions."
+        },
+        "dualAgent.retrieval": {
+          "type": "boolean",
+          "default": true,
+          "description": "On a new task's first message that names no file, add a short list of the files and definitions the repository index ranks for it (about 300 tokens), so the agent opens the right files first. Turn off to compare cost and results without it."
+        },
+        "dualAgent.autoCheck": {
+          "type": "string",
+          "enum": ["off", "typecheck", "all"],
+          "default": "typecheck",
+          "description": "When the main agent stops after editing files, run the project's checks (from .dual-agent/memory/conventions.md) and send failures back to it: typecheck only, or typecheck, lint and tests. Takes effect for new agent sessions."
+        },
+        "dualAgent.autoCheckTimeoutSeconds": {
+          "type": "number",
+          "default": 60,
+          "description": "Timeout for the automatic typecheck and lint runs."
+        },
+        "dualAgent.autoCheckTestTimeoutSeconds": {
+          "type": "number",
+          "default": 180,
+          "description": "Timeout for the automatic test run (dualAgent.autoCheck: all)."
+        },
+        "dualAgent.cacheDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask the Claude API why the prompt cache missed, and log each miss with its cause (Dual Agent: Show Failures). Adds no tokens. Takes effect for new agent sessions."
+        },
+        "dualAgent.trimToolOutput": {
+          "type": "boolean",
+          "default": true,
+          "description": "Cut long tool output before the model sees it: test and build runs to their failures and summary, anything over 8,000 characters to its start and end with the full text saved in .dual-agent/outputs."
+        },
+        "dualAgent.leanEscalation": {
+          "type": "boolean",
+          "default": true,
+          "description": "In auto mode, when a stronger model takes over a conversation with more than 100k tokens of history, start it fresh with a short handoff (requests, files changed, open to-dos, the last reply) instead of re-reading the whole history at full price."
+        },
+        "dualAgent.maxStepsPerTurn": {
+          "type": "number",
+          "default": 150,
+          "minimum": 0,
+          "description": "Stop a reply after this many model steps: it's likely going in circles. 0 = no limit. Repeated identical tool calls and retries of a command that failed twice are refused anyway."
+        },
+        "dualAgent.compactWindow": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 1000000,
+          "description": "Context size in tokens at which the conversation is summarized (compacted). Every call re-sends the whole context, so a smaller window costs less on long sessions. 0 = 200,000 on Claude and 160,000 on DeepSeek; values from 100,000 to 1,000,000 are used as given."
+        },
+        "dualAgent.replyStyle": {
+          "type": "string",
+          "enum": [
+            "off",
+            "lite",
+            "full",
+            "ultra"
+          ],
+          "enumDescriptions": [
+            "Normal replies.",
+            "Full sentences without filler, hedging or ceremony.",
+            "Terse: fragments, no articles, answer first. Every technical fact, code span, path and error kept exactly.",
+            "Maximum compression: one word when one word is enough, each fact once."
+          ],
+          "default": "full",
+          "description": "How terse the agent's replies are. Fewer output tokens means faster, cheaper replies; code, commands, errors, commits and files are never compressed, and security warnings and questions to you stay in full sentences. Applies to new chats."
+        },
+        "dualAgent.leanWorkflow": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reuse-first, token-saving coding rules: search before writing and extend existing code, read ranges instead of whole files, change only the layer that owns a bug, test-first without weakening tests, comments only for what the code can't say. Adds the code_map, find_duplicates and language-server tools (outline, definition, references, problems), and a check after each edit for duplicated code and comments that narrate the edit. Also one-line code-review findings, Conventional Commits, and compact reports from helper agents. Applies to new chats."
+        },
+        "dualAgent.buildMode": {
+          "type": "string",
+          "enum": [
+            "hybrid",
+            "reuse",
+            "craft"
+          ],
+          "enumDescriptions": [
+            "Decide per component whether to reuse existing open-source code or write it (default for every project).",
+            "Look for established open-source code first; write it only when nothing suitable passes the checks.",
+            "Write everything; no searching or copying from outside repositories."
+          ],
+          "default": "hybrid",
+          "description": "How the agent builds things. Reuse and hybrid can search GitHub, download a pinned commit into the workspace's ignored .dual-agent/reuse folder, scan it for malware patterns without running it, and import the needed files with license checks, attribution and provenance (you approve each import). \"Dual Agent: Set Build Mode\" sets it per project. Applies to new chats."
+        },
+        "dualAgent.webTools": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "dualAgent",
+            "builtin"
+          ],
+          "enumDescriptions": [
+            "Claude Code's built-in web search and fetch (server-side on Claude and DeepSeek); DeepSeek uses Dual Agent's web tools once a BRAVE_API_KEY or TAVILY_API_KEY is set.",
+            "Both providers use Dual Agent's web tools (DuckDuckGo and Brave, or the Brave/Tavily APIs with a key).",
+            "Both providers use Claude Code's built-in WebSearch and WebFetch."
+          ],
+          "default": "auto",
+          "description": "How the agents search and read the web."
+        },
+        "dualAgent.claudeRole": {
+          "type": "string",
+          "enum": [
+            "backup",
+            "off",
+            "primary"
+          ],
+          "enumDescriptions": [
+            "DeepSeek does the work (Flash and V4 Pro); Claude takes over only when V4 Pro is stuck or DeepSeek is down. The default while Claude is phased out.",
+            "Never use Claude in auto mode. Picking Claude by hand still works.",
+            "Claude first while your subscription use keeps pace with its window; DeepSeek for normal coding and when Claude's quota runs low."
+          ],
+          "default": "backup",
+          "description": "How much auto mode uses Claude. The usage panel shows how many replies still needed Claude, to tell when it can be switched off."
+        },
+        "dualAgent.tokenSplit": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 50,
+          "minimum": 0,
+          "maximum": 100,
+          "markdownDescription": "Delegation split for auto mode: Claude's target share of tokens, 0-100 (DeepSeek gets the rest). The providers take turns in stints of half their share of a usual day (70/30: Claude 35%, then DeepSeek 15%, twice a day), so the provider changes only at stint ends. Stuck tasks still escalate and Claude backs off when its quota runs low. A split set from the Split tab is saved for that repo and stays its default; this setting is the default for other repos. `null` turns it off and uses `#dualAgent.claudeRole#`."
+        },
+        "dualAgent.dailyBudgetUsd": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Stop starting new replies once today's per-token spend (DeepSeek, Anthropic key) reaches this many dollars; a warning comes at 80%. 0 = no limit. Subscription use doesn't count."
+        },
+        "dualAgent.showCostInChat": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the chat's cost at API prices next to the token count in the message box. The usage panel and the pill's tooltip always show it."
+        },
+        "dualAgent.costLimitUsd": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Stop once per-token spend across all models since the last reset reaches this many dollars: the running reply stops and no new one starts until \"Dual Agent: Reset Cost Limits\". A warning comes at 80%. Counting starts when you first set a limit. 0 = off. Subscription use doesn't count."
+        },
+        "dualAgent.modelCostLimitsUsd": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": { "type": "number", "minimum": 0 },
+          "markdownDescription": "Spend limits per model since the last reset, in dollars, e.g. `{ \"deepseek-v4-pro\": 5, \"claude-opus\": 20 }`. A name covers every model id that starts with it. A model that reaches its limit stops the reply and isn't used until **Dual Agent: Reset Cost Limits**; another model answers instead (in auto mode, possibly the other provider). DeepSeek's helpers run on its fast model, so a limit on that one pauses DeepSeek. Empty = off."
+        },
+        "dualAgent.logRetentionDays": {
+          "type": "number",
+          "default": 90,
+          "minimum": 1,
+          "description": "Days of failure, turn and model-call logs to keep (the usage folder's diag, turns and calls files); older rows are dropped when VS Code starts. Usage rows are kept as billing history."
+        },
+        "dualAgent.fallbackCooldownMinutes": {
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "description": "After a provider fails in auto mode, how long to stay on the other one before trying it again (unless the provider reports its own reset time)."
+        },
+        "dualAgent.claude.model": {
+          "type": "string",
+          "default": "",
+          "description": "Claude model to use (for example claude-opus-5-5 or claude-sonnet-5-5). Leave empty to use your Claude Code default."
+        },
+        "dualAgent.claude.plannerModel": {
+          "type": "string",
+          "default": "",
+          "description": "Claude model for the Plan and deep thinker helpers. Leave empty for Opus (its latest release), or Sonnet if your account doesn't offer Opus."
+        },
+        "dualAgent.claude.helperModel": {
+          "type": "string",
+          "default": "",
+          "description": "Claude model for delegated work when it runs on Claude (quick jobs and searches use Haiku). Leave empty for Sonnet (its latest release)."
+        },
+        "dualAgent.claude.thinkingEffort": {
+          "type": "string",
+          "enum": ["medium", "high", "xhigh"],
+          "default": "medium",
+          "description": "How hard Claude thinks when effort is Thinking. Medium answers faster with fewer, shorter tool calls; high and xhigh think longer on every turn, status replies included."
+        },
+        "dualAgent.claude.fastMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Fast mode for Opus: up to 2.5x faster output at about twice the price per token. Best for long answers and big edits."
+        },
+        "dualAgent.deepseek.advisor": {
+          "type": "boolean",
+          "default": false,
+          "description": "When DeepSeek runs on Flash, give it an ask_advisor tool that consults V4 Pro on plans, when stuck and before finishing hard tasks. Each question is one extra V4 Pro call."
+        },
+        "dualAgent.claude.advisor": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run the main agent on Sonnet (faster, cheaper) with Opus as an advisor it consults at key points. Ignored when Claude: Model is set."
+        },
+        "dualAgent.deepseek.baseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com/anthropic",
+          "description": "DeepSeek's Anthropic-compatible endpoint."
+        },
+        "dualAgent.deepseek.apiKeyFile": {
+          "type": "string",
+          "default": "",
+          "description": "Optional path to a .env-style file containing DEEPSEEK_API_KEY=... . When set and readable, it is used instead of the key stored with \"Set DeepSeek API Key\"."
+        },
+        "dualAgent.deepseek.model": {
+          "type": "string",
+          "default": "",
+          "description": "DeepSeek model for Thinking effort and planning. Leave empty for the newest Pro model DeepSeek lists (checked daily), else deepseek-v4-pro."
+        },
+        "dualAgent.deepseek.fastModel": {
+          "type": "string",
+          "default": "",
+          "description": "DeepSeek model for Flash effort, delegated work and background tasks. Leave empty for the newest Flash model DeepSeek lists (checked daily), else deepseek-flash."
+        },
+        "dualAgent.permissionMode": {
+          "type": "string",
+          "enum": [
+            "default",
+            "acceptEdits",
+            "bypassPermissions",
+            "plan"
+          ],
+          "enumDescriptions": [
+            "Ask before edits and commands.",
+            "Create and edit files without asking; still ask before commands.",
+            "Never ask: edits, file creation and commands all run without confirmation. Use only in workspaces you trust.",
+            "Read-only planning: no edits or commands run."
+          ],
+          "default": "default",
+          "description": "How the agent asks before acting. Changes apply immediately, even mid-task."
+        },
+        "dualAgent.theme": {
+          "type": "string",
+          "enum": [
+            "midnight",
+            "oled",
+            "graphite",
+            "nord",
+            "ocean",
+            "forest",
+            "aurora",
+            "ember"
+          ],
+          "enumDescriptions": [
+            "Sky and indigo (default).",
+            "True black, same accents.",
+            "Quiet neutral grays.",
+            "Cool arctic blues.",
+            "Deep teal and cyan.",
+            "Pine greens.",
+            "Violet and pink.",
+            "Warm orange and rose."
+          ],
+          "default": "graphite",
+          "description": "Color theme of the chat. All are dark. Also changeable from the palette button in the chat."
+        },
+        "dualAgent.usageFolder": {
+          "type": "string",
+          "default": "",
+          "description": "Folder for token-usage records (one file per machine). Point it at a folder you sync between machines (Dropbox, iCloud, Syncthing, a private git repo) to see totals across all of them. Empty: kept in VS Code's storage on this machine. Takes effect after a reload."
+        },
+        "dualAgent.telemetry.otlpEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Optional OpenTelemetry collector (for example http://localhost:4318). When set, Claude Code's own metrics and events (tokens, cost, latency, tool results) are exported there. Prompts and tool contents are never included. Empty: nothing leaves this machine. Applies from the next new chat."
+        },
+        "dualAgent.telemetry.otlpProtocol": {
+          "type": "string",
+          "enum": [
+            "http/protobuf",
+            "http/json",
+            "grpc"
+          ],
+          "default": "http/protobuf",
+          "description": "Protocol for dualAgent.telemetry.otlpEndpoint."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "vscode:prepublish": "npm run compile",
+    "package": "node scripts/package.mjs",
+    "package:all": "node scripts/package.mjs all",
+    "pretest": "npm run compile",
+    "test": "npm run test:unit && npm run test:webview && npm run test:vscode",
+    "test:unit": "node --test --test-concurrency=1 out/test/unit/",
+    "test:webview": "node --test out/test/webview/",
+    "test:vscode": "node out/test/vscode/run.js",
+    "eval": "npm run compile && node out/test/eval/run.js",
+    "perf:activation": "node scripts/perf-activation.mjs",
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.296",
+    "@mozilla/readability": "^0.6.0",
+    "linkedom": "^0.18.13",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
+    "puppeteer-core": "^24.43.1",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,370 @@
+/* ---------- Questions and plan approval ---------- */
+
+.ask-card,
+.plan-card {
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.ask-card.resolved,
+.plan-card.resolved {
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.ask-card.sending {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.ask-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.ask-head .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.ask-title {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.ask-card.resolved .ask-head {
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.ask-card.resolved.skipped .ask-head {
+  color: var(--muted);
+}
+
+.ask-q + .ask-q {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* Several questions: a tab per question, one showing at a time. */
+.ask-card.tabbed .ask-q + .ask-q {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* The tab already names the question. */
+.ask-card.tabbed .ask-qhead .ask-chip {
+  display: none;
+}
+
+.ask-card.tabbed .ask-qhead:not(:has(.ask-hint)) {
+  display: none;
+}
+
+.ask-progress {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ask-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ask-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ask-tab:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+.ask-tab.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.ask-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.ask-tab-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  flex: none;
+}
+
+.ask-tab.done .ask-tab-mark {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.ask-card [hidden] {
+  display: none !important;
+}
+
+.ask-qhead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ask-chip {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  white-space: nowrap;
+}
+
+.ask-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ask-text {
+  margin-bottom: 8px;
+  font-weight: 550;
+}
+
+.ask-options {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ask-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  text-align: left;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.ask-opt:hover {
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ask-opt.selected {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-2));
+}
+
+.ask-mark {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  flex: none;
+  border-radius: 50%;
+  border: 1.5px solid var(--faint);
+}
+
+.ask-opt.multi .ask-mark {
+  border-radius: 4px;
+}
+
+.ask-opt.selected .ask-mark {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 2.5px var(--surface-2);
+}
+
+.ask-opt.multi.selected .ask-mark {
+  position: relative;
+  box-shadow: none;
+}
+
+/* The tick, drawn with borders (the page's security policy allows no inline images). */
+.ask-opt.multi.selected .ask-mark::after {
+  content: '';
+  position: absolute;
+  left: 3.5px;
+  top: 0.5px;
+  width: 3.5px;
+  height: 7px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.ask-opt-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ask-label {
+  font-weight: 600;
+}
+
+.ask-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.ask-other-input,
+.plan-feedback {
+  width: 100%;
+  margin-top: 6px;
+  padding: 7px 10px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  outline: none;
+  resize: vertical;
+}
+
+.ask-other-input:focus,
+.plan-feedback:focus {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.ask-other-input[hidden],
+.ask-preview[hidden] {
+  display: none;
+}
+
+.ask-preview {
+  margin-top: 6px;
+  max-height: 200px;
+}
+
+.ask-sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.ask-sum-q {
+  color: var(--muted);
+}
+
+.ask-sum-a {
+  font-weight: 650;
+}
+
+.ask-sum-a::before {
+  content: '→ ';
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.plan-body {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 2px 2px 4px;
+}
+
+.plan-steps {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: plan-step;
+}
+
+.plan-step {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  counter-increment: plan-step;
+}
+
+.plan-step::before {
+  content: counter(plan-step) '.';
+  min-width: 20px;
+  color: var(--muted);
+  text-align: right;
+  padding-right: 4px;
+}
+
+.plan-step-text {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+.plan-step-text:focus {
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.plan-step-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.plan-add {
+  margin-top: 6px;
+}
+
+.plan-checklist {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+}
+
+.plan-checklist li {
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.plan-checklist li::before {
+  content: '\2713  ';
+  color: var(--accent);
+}
+
+.plan-card .verdict {
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
